@@ -6,10 +6,14 @@ import numpy as np
 import os
 import dlib
 
+# 检测是否有可用的GPU
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+print('Running on device: {}'.format(device))
+
 # 初始化MTCNN和InceptionResnetV1
 mtcnn = MTCNN()
 # 对于在 CASIA-Webface 上预训练的模型
-resnet = InceptionResnetV1(pretrained='casia-webface').eval()
+resnet = InceptionResnetV1(pretrained='casia-webface').eval().to(device)
 
 # 加载大头照并提取特征向量
 def load_and_extract_features(folder_path):
@@ -71,7 +75,7 @@ def recognize_face(face, database, threshold=1.0):
 
 
 # 加载人脸库
-folder_path = '/Users/liuhaiyi/Library/CloudStorage/OneDrive-个人/haiyi文件/学校/个人/英才计划/2024寒假线下活动/工坊/person/'  # 设置为大头照所在文件夹的路径
+folder_path = './person/'  # 设置为大头照所在文件夹的路径
 face_database = load_and_extract_features(folder_path)
 
 def mouth_aspect_ratio(mouth_points):

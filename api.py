@@ -10,13 +10,18 @@ from datetime import datetime
 import dlib
 import logging
 import uuid
+import torch
 
 app = Flask(__name__)
 CORS(app)
 
+# 检测是否有可用的GPU
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+print('Running on device: {}'.format(device))
+
 # 初始化MTCNN和InceptionResnetV1
 mtcnn = MTCNN()
-resnet = InceptionResnetV1(pretrained='vggface2').eval()
+resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
 
 # 设置日志记录
 logging.basicConfig(level=logging.INFO)
